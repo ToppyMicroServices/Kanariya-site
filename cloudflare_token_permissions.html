@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Cloudflare API Token Permissions (Kanariya) | Kanariya</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Cloudflare API Token Permissions (Kanariya)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Serverless canary detection for files and URLs (Cloudflare Workers + KV)" />
+<meta property="og:description" content="Serverless canary detection for files and URLs (Cloudflare Workers + KV)" />
+<link rel="canonical" href="https://ui.kanariya.toppymicros.com/cloudflare_token_permissions.html" />
+<meta property="og:url" content="https://ui.kanariya.toppymicros.com/cloudflare_token_permissions.html" />
+<meta property="og:site_name" content="Kanariya" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Cloudflare API Token Permissions (Kanariya)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Serverless canary detection for files and URLs (Cloudflare Workers + KV)","headline":"Cloudflare API Token Permissions (Kanariya)","url":"https://ui.kanariya.toppymicros.com/cloudflare_token_permissions.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/assets/css/style.css?v=c1e8eefd8490934e798dffdf5538cbcfe2e086b1">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://ui.kanariya.toppymicros.com/">Kanariya</a></h1>
+      
+
+      <h1 id="cloudflare-api-token-permissions-kanariya">Cloudflare API Token Permissions (Kanariya)</h1>
+
+<p>This project uses Cloudflare APIs for <strong>DNS</strong>, <strong>Workers</strong>, <strong>KV</strong>, and optional <strong>WAF/Rate limit</strong> rules.</p>
+
+<h2 id="recommended-minimal-permissions">Recommended minimal permissions</h2>
+
+<p>Scope your token to the specific account + zone.</p>
+
+<ul>
+  <li>Zone
+    <ul>
+      <li>Zone:Read</li>
+      <li>DNS:Edit</li>
+      <li>Workers Routes:Edit</li>
+      <li>Zone WAF:Edit (optional, for WAF/rate limit rules)</li>
+    </ul>
+  </li>
+  <li>Account
+    <ul>
+      <li>Workers Scripts:Edit</li>
+      <li>Workers KV Storage:Edit</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Notes:</p>
+
+<ul>
+  <li>If you only need read-only verification, use:
+    <ul>
+      <li>Zone:Read</li>
+      <li>DNS:Read</li>
+      <li>Workers Routes:Read</li>
+      <li>Workers Scripts:Read</li>
+      <li>Workers KV Storage:Read</li>
+    </ul>
+  </li>
+  <li>In the Cloudflare UI, “Workers Routes” appears under Zone permissions (not Account).</li>
+  <li>Some endpoints require <code class="language-plaintext highlighter-rouge">Account:Read</code> to list accounts. If you already know the account ID, you can avoid it.</li>
+</ul>
+
+<h2 id="token-strategy-recommended">Token strategy (recommended)</h2>
+
+<p>Split tokens by purpose and scope them to the target account and zone.</p>
+
+<h3 id="a-provision-token-bootstrap-scripts">A) Provision token (bootstrap scripts)</h3>
+
+<p>For <code class="language-plaintext highlighter-rouge">scripts/cf_bootstrap.py</code> and initial setup:</p>
+
+<ul>
+  <li>Zone: Zone:Read, DNS:Edit, Workers Routes:Edit</li>
+  <li>Account: Workers Scripts:Edit, Workers KV Storage:Edit, Account Settings:Read</li>
+  <li>Optional (if you automate WAF/Rate Limit): Zone WAF:Edit</li>
+</ul>
+
+<h3 id="b-deploy-token-ci--wrangler-deploy">B) Deploy token (CI / wrangler deploy)</h3>
+
+<p>For CI deploys:</p>
+
+<ul>
+  <li>Account: Workers Scripts:Edit, Workers KV Storage:Edit, Account Settings:Read</li>
+  <li>Zone: Workers Routes:Edit</li>
+  <li>User scopes may be required in some accounts: User Details:Read, Memberships:Read</li>
+</ul>
+
+<h3 id="c-pages-token-only-if-you-manage-pages-via-apicli">C) Pages token (only if you manage Pages via API/CLI)</h3>
+
+<ul>
+  <li>Pages:Read or Pages:Edit (only if you manage Pages via API/CLI)</li>
+</ul>
+
+<p>If you connect Pages to GitHub directly, you can skip a Pages API token.</p>
+
+<h2 id="architecture-tip-cloudflare-only">Architecture tip (Cloudflare only)</h2>
+
+<p>The shortest Cloudflare-only setup is:</p>
+
+<ul>
+  <li>UI on Cloudflare Pages</li>
+  <li>API on Cloudflare Workers (<code class="language-plaintext highlighter-rouge">/canary/*</code>)</li>
+</ul>
+
+<p>This keeps a single domain and splits by path while staying entirely on Cloudflare.</p>
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="https://github.com/ToppyMicroServices/Kanariya/edit/main/docs/cloudflare_token_permissions.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
